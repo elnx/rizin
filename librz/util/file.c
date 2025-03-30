@@ -571,7 +571,7 @@ RZ_API ut8 *rz_file_slurp_hexpairs(const char *str, int *usz) {
 		*usz = 0;
 	}
 	ut8 *ret;
-	long sz;
+	size_t sz;
 	int c, bytes = 0;
 	FILE *fd = rz_sys_fopen(str, "rb");
 	if (!fd) {
