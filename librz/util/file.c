@@ -29,6 +29,14 @@
 #define StructStat struct stat
 #endif
 
+#ifdef _WIN32
+    #define ftell64 _ftelli64
+    #define fseek64 _fseeki64
+#else
+    #define ftell64 ftell
+    #define fseek64 fseek
+#endif
+
 static int file_stat(const char *file, StructStat *pStat) {
 	rz_return_val_if_fail(file && pStat, -1);
 #if __WINDOWS__
@@ -479,10 +487,10 @@ RZ_API RZ_OWN char *rz_file_slurp(const char *str, RZ_NULLABLE size_t *usz) {
 	if (!fd) {
 		return NULL;
 	}
-	if (fseek(fd, 0, SEEK_END) == -1) {
+	if (fseek64(fd, 0, SEEK_END) == -1) {
 		// cannot determine the size of the file
 	}
-	size_t sz = ftell(fd);
+	size_t sz = ftell64(fd);
 	if (sz < 0) {
 		fclose(fd);
 		return NULL;
@@ -491,7 +499,7 @@ RZ_API RZ_OWN char *rz_file_slurp(const char *str, RZ_NULLABLE size_t *usz) {
 		if (rz_file_is_regular(str)) {
 			char *buf = NULL;
 			long size = 0;
-			(void)fseek(fd, 0, SEEK_SET);
+			(void)fseek64(fd, 0, SEEK_SET);
 			do {
 				char *nbuf = realloc(buf, size + BS);
 				if (!nbuf) {
@@ -577,9 +585,9 @@ RZ_API ut8 *rz_file_slurp_hexpairs(const char *str, int *usz) {
 	if (!fd) {
 		return NULL;
 	}
-	(void)fseek(fd, 0, SEEK_END);
-	sz = ftell(fd);
-	(void)fseek(fd, 0, SEEK_SET);
+	(void)fseek64(fd, 0, SEEK_END);
+	sz = ftell64(fd);
+	(void)fseek64(fd, 0, SEEK_SET);
 	ret = (ut8 *)malloc((sz >> 1) + 1);
 	if (!ret) {
 		fclose(fd);
@@ -628,7 +636,7 @@ RZ_API RZ_OWN char *rz_file_slurp_range(RZ_NONNULL const char *str, ut64 off, in
 		return NULL;
 	}
 	// XXX handle out of bound reads (eof)
-	if (fseek(fd, off, SEEK_SET) < 0) {
+	if (fseek64(fd, off, SEEK_SET) < 0) {
 		fclose(fd);
 		return NULL;
 	}
