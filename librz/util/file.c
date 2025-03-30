@@ -482,7 +482,7 @@ RZ_API RZ_OWN char *rz_file_slurp(const char *str, RZ_NULLABLE size_t *usz) {
 	if (fseek(fd, 0, SEEK_END) == -1) {
 		// cannot determine the size of the file
 	}
-	long sz = ftell(fd);
+	size_t sz = ftell(fd);
 	if (sz < 0) {
 		fclose(fd);
 		return NULL;
