@@ -30,11 +30,11 @@
 #endif
 
 #ifdef _WIN32
-    #define ftell64 _ftelli64
-    #define fseek64 _fseeki64
+#define ftell64 _ftelli64
+#define fseek64 _fseeki64
 #else
-    #define ftell64 ftell
-    #define fseek64 fseek
+#define ftell64 ftell
+#define fseek64 fseek
 #endif
 
 static int file_stat(const char *file, StructStat *pStat) {
